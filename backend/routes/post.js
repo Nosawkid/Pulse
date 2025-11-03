@@ -1,8 +1,8 @@
 import express from 'express'
-import { validateNewPost } from '../validations/postValidation.js'
+import { validateNewPost, validateLikes } from '../validations/postValidation.js'
 import validate from '../middlewares/schemaValidation.js'
-import { verifyRole, verifyToken } from '../middlewares/authMiddleware.js'
-import { addPost, getPosts } from '../controllers/postController.js'
+import { verifyToken } from '../middlewares/authMiddleware.js'
+import { addPost, commentPost, deletePost, getPost, getPosts, likePost, unlikePost } from '../controllers/postController.js'
 import multer from 'multer'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import cloudinary from '../configs/cloudinary.js'
@@ -22,15 +22,17 @@ const upload = multer({ storage })
 
 router.post("/", verifyToken, validate(validateNewPost), upload.single("image"), addPost)
 
-router.get("/", verifyToken, verifyRole("admin", "mod"), getPosts)
+router.get("/", verifyToken, getPosts)
 
-router.get("/:id", (req, res) => {
-    res.json({ message: "Get post" })
-})
+router.get("/:id", verifyToken, getPost)
 
-router.delete("/:id", (req, res) => {
-    res.json({ message: "Delete Post" })
-})
+router.delete("/:id", verifyToken, deletePost)
+
+router.post("/like/:id", verifyToken, validate(validateLikes), likePost)
+
+router.post("/unlike/:id", verifyToken, unlikePost)
+
+router.post("/comment/:id", verifyToken, commentPost)
 
 
 
