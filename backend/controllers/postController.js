@@ -2,6 +2,7 @@ import Post from '../models/Post.js'
 import User from '../models/User.js'
 import Like from '../models/Like.js'
 import Comment from '../models/Comment.js'
+import cloudinary from '../configs/cloudinary.js'
 
 export const addPost = async (req, res, next) => {
     const { title, content } = req.body
@@ -32,14 +33,16 @@ export const getPosts = async (req, res, next) => {
     const posts = await Post.find().skip(skip).limit(limit).populate("userId", "username").sort({ createdAt: -1 }).lean()
 
     const postsWithCommentAndLikeCount = await Promise.all(posts.map(async (p) => {
-        const [likeCount, commentCount] = await Promise.all([
+        const [likeCount, commentCount, userLike] = await Promise.all([
             Like.countDocuments({ postId: p._id }),
-            Comment.countDocuments({ postId: p._id })
+            Comment.countDocuments({ postId: p._id }),
+            Like.findOne({ userId: req.user.id, postId: p._id })
         ])
         return {
             ...p,
             likeCount,
-            commentCount
+            commentCount,
+            hasLiked: !!userLike
         }
     }))
 
@@ -58,12 +61,14 @@ export const getPost = async (req, res, next) => {
         res.status(404)
         return next(new Error("Post Not Found"))
     }
-    const comments = await Comment.find({ postId: post._id })
+    const comments = await Comment.find({ postId: post._id }).populate("userId", "username")
     const likes = await Like.countDocuments({ postId: post._id })
+    const userLike = await Like.findOne({ postId: post._id, userId: req.user.id })
     res.status(200).json({
         post,
         comments,
-        likes
+        likes,
+        hasLiked: !!userLike
     })
 
 }
@@ -76,7 +81,17 @@ export const deletePost = async (req, res, next) => {
         return next(new Error("Post not found"))
     }
     if (post.userId.equals(req.user?.id) || req.user?.role === "admin" || req.user?.role === "mod") {
+        if (post.imageUrl) {
+            try {
+                const publicId = post.imageUrl?.split("/").slice(-2).join("/").split(".")[0]
+                await cloudinary.uploader.destroy(publicId)
+            } catch (error) {
+                res.status(400)
+                return next(new Error("Deletion failed"))
+            }
+        }
         await Post.findByIdAndDelete(id)
+        await Comment.deleteMany({ postId: post._id })
         res.status(200).json({ message: "Post Deleted Successfully" })
     } else {
         res.status(403)

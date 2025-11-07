@@ -37,6 +37,11 @@ export const makeMod = async (req, res, next) => {
         return next(new Error("No user found"))
     }
 
+    if (user.role === "mod") {
+        res.status(400)
+        return next(new Error("User is already a moderator"))
+    }
+
     user.role = "mod"
     const updatedUser = await user.save()
 
@@ -44,4 +49,27 @@ export const makeMod = async (req, res, next) => {
         updatedUser,
         message: "New mod added"
     })
+}
+
+export const unMod = async (req, res, next) => {
+    const { userId } = req.params
+    const user = await User.findById(userId)
+    if (user) {
+        res.status(404)
+        return next(new Error("No user found"))
+    }
+
+    if (user.role === "mod") {
+        user.role = "user"
+        const updatedUser = await user.save()
+
+        res.status(200).json({
+            updatedUser,
+            message: "New mod added"
+        })
+    }
+
+
+    res.status(400)
+    return next(new Error("User is already a moderator"))
 }
