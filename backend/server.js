@@ -7,6 +7,7 @@ import postRoutes from './routes/post.js'
 import { errorHandler, notFound } from './middlewares/errorMiddleware.js'
 import userRoutes from './routes/users.js'
 import appLimiter from './configs/appLimiter.js'
+import cors from 'cors'
 
 dotenv.config()
 const app = express()
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 8000
 
 
 
-
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())

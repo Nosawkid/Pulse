@@ -10,13 +10,13 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get("/api/auth/refresh", {
+        const res = await axios.get("/auth/refresh", {
           withCredentials: true,
         });
         setAuth({
           accessToken: res.data.accessToken,
           user: res.data.user,
-          role: res.data.user.role,
+          role: res.data.user?.role,
         });
       } catch (error) {
         setAuth(null);
