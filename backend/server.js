@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 8000;
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://pulse-frontend.onrender.com",
+    "https://pulse-frontent.onrender.com",
 ];
 
 app.use(
