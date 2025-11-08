@@ -29,7 +29,12 @@ const Post = ({ post }) => {
   return (
     <div className="bg-white/90 mb-4 rounded px-2 py-3">
       <div className="text-black text-base tracking-tighter mb-4">
-        {post?.userId?.username}
+        {post?.userId?.username}{" "}
+        {post?.userId?.role === "admin" && (
+          <p className="bg-green-500 w-fit px-2 py-1 rounded-4xl text-white text-center text-xs">
+            Admin
+          </p>
+        )}
         <span className="inline-block mx-2 text-xs tracking-tighter text-gray-400">
           {dayjs(post.createdAt).fromNow()}
         </span>

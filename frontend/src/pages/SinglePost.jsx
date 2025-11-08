@@ -77,7 +77,7 @@ const SinglePost = () => {
           </span>
         </div>
         <div>
-          {auth?.user?.id === post?.userId?._id && (
+          {(auth?.user.id === post?.userId?._id || auth?.role === "admin") && (
             <button
               onClick={handleDelete}
               className="bg-red-500 px-4 py-2 rounded-lg text-sm text-white font-semibold cursor-pointer"

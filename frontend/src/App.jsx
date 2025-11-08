@@ -9,6 +9,8 @@ import UserDashboard from "./pages/UserDashboard";
 import EditorDashboard from "./pages/EditorDashboard";
 import PublicRoute from "./components/PublicRoute";
 import SinglePost from "./pages/SinglePost";
+import UserList from "./pages/UserList";
+import Unauthorized from "./pages/Unauthorized";
 
 const App = () => {
   return (
@@ -56,6 +58,15 @@ const App = () => {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/users"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <UserList />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/unauthorized" element={<Unauthorized />} />
           </Route>
         </Routes>
       </div>

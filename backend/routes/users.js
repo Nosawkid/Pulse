@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.get("/", verifyToken, verifyRole("admin", "mod"), getUsers)
 router.post("/mod/:userId", verifyToken, verifyRole("admin"), makeMod)
-router.post("/remove-mode/:userId", verifyToken, verifyRole("admin"), unMod)
+router.post("/remove-mod/:userId", verifyToken, verifyRole("admin"), unMod)
 
 
 

@@ -1,3 +1,5 @@
+import Like from '../models/Like.js'
+import Post from '../models/Post.js'
 import User from '../models/User.js'
 
 
@@ -21,6 +23,7 @@ export const getUsers = async (req, res, next) => {
 
     const total = await User.countDocuments(filter)
     const users = await User.find(filter).skip(skip).limit(limit).select("-password")
+
     res.status(200).json({
         users,
         total,
@@ -32,7 +35,7 @@ export const getUsers = async (req, res, next) => {
 export const makeMod = async (req, res, next) => {
     const { userId } = req.params
     const user = await User.findById(userId)
-    if (user) {
+    if (!user) {
         res.status(404)
         return next(new Error("No user found"))
     }
@@ -54,7 +57,7 @@ export const makeMod = async (req, res, next) => {
 export const unMod = async (req, res, next) => {
     const { userId } = req.params
     const user = await User.findById(userId)
-    if (user) {
+    if (!user) {
         res.status(404)
         return next(new Error("No user found"))
     }

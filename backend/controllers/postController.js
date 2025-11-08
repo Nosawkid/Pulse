@@ -30,7 +30,7 @@ export const getPosts = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10
     const skip = (page - 1) * limit
     const total = await Post.countDocuments()
-    const posts = await Post.find().skip(skip).limit(limit).populate("userId", "username").sort({ createdAt: -1 }).lean()
+    const posts = await Post.find().skip(skip).limit(limit).populate("userId", "username role").sort({ createdAt: -1 }).lean()
 
     const postsWithCommentAndLikeCount = await Promise.all(posts.map(async (p) => {
         const [likeCount, commentCount, userLike] = await Promise.all([
@@ -56,7 +56,7 @@ export const getPosts = async (req, res, next) => {
 
 export const getPost = async (req, res, next) => {
     const { id } = req.params
-    const post = await Post.findById(id).populate("userId", "username")
+    const post = await Post.findById(id).populate("userId", "username role")
     if (!post) {
         res.status(404)
         return next(new Error("Post Not Found"))
