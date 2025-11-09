@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await axios.get("/auth/refresh", {
+        const res = await axios.get("/api/auth/refresh", {
           withCredentials: true,
         });
         setAuth({

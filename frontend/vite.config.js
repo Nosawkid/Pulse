@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://pulse-backend-7oic.onrender.com"
+        target: "https://pulse-backend-7oic.onrender.com",
       }
     }
   }
